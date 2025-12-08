@@ -9,7 +9,7 @@ const Projects = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('https://api.github.com/users/nguyenhuy158/repos?sort=updated&per_page=6');
+        const response = await fetch('https://api.github.com/users/nguyenhuy158/repos?sort=updated&per_page=10');
         if (!response.ok) {
           throw new Error('Failed to fetch projects');
         }
@@ -52,7 +52,11 @@ const Projects = () => {
 
         setProjects(transformedProjects);
       } catch (err) {
-        setError(err.message);
+        if (err.message.includes('rate limit')) {
+          setError('GitHub API rate limit exceeded. Projects will update in about an hour.');
+        } else {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }

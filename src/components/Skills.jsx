@@ -9,27 +9,32 @@ const Skills = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        // First, get all repositories
-        const reposResponse = await fetch('https://api.github.com/users/nguyenhuy158/repos?per_page=100');
+        // First, get recent repositories (limit to avoid rate limits)
+        const reposResponse = await fetch('https://api.github.com/users/nguyenhuy158/repos?sort=updated&per_page=20');
         if (!reposResponse.ok) {
           throw new Error('Failed to fetch repositories');
         }
         const repos = await reposResponse.json();
 
-        // Filter out forks and get languages for each repo
-        const languagePromises = repos
+        // Filter out forks and limit to recent repos to avoid rate limits
+        const recentRepos = repos
           .filter(repo => !repo.fork)
-          .map(async (repo) => {
-            try {
-              const langResponse = await fetch(`https://api.github.com/repos/nguyenhuy158/${repo.name}/languages`);
-              if (langResponse.ok) {
-                return await langResponse.json();
-              }
-              return {};
-            } catch {
-              return {};
+          .slice(0, 10); // Process only the 10 most recent repos
+
+        // Get languages for each repo (with rate limit handling)
+        const languagePromises = recentRepos.map(async (repo) => {
+          try {
+            const langResponse = await fetch(`https://api.github.com/repos/nguyenhuy158/${repo.name}/languages`);
+            if (langResponse.ok) {
+              return await langResponse.json();
             }
-          });
+            // If rate limited or error, fall back to primary language
+            return repo.language ? { [repo.language]: 1000 } : {};
+          } catch {
+            // If rate limited, fall back to primary language
+            return repo.language ? { [repo.language]: 1000 } : {};
+          }
+        });
 
         const languagesArrays = await Promise.all(languagePromises);
 
@@ -68,7 +73,11 @@ const Skills = () => {
 
         setSkills(categorizedSkills);
       } catch (err) {
-        setError(err.message);
+        if (err.message.includes('rate limit')) {
+          setError('GitHub API rate limit exceeded. Skills will update in about an hour.');
+        } else {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
