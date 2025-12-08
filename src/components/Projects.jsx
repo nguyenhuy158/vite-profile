@@ -21,7 +21,7 @@ const Projects = () => {
           .slice(0, 6) // Limit to 6 projects
           .map(async (repo) => {
             // Try to get thumbnail from repo
-            let thumbnail = `https://source.unsplash.com/random/800x600/?technology,code,programming`; // Default fallback with tech keywords
+            let thumbnail = `https://picsum.photos/800/600?random=${Math.floor(Math.random() * 1000)}`; // Default fallback with random seed
 
             try {
               // Try background.png first
