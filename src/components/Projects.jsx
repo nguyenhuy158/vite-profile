@@ -22,7 +22,7 @@ const Projects = () => {
           .map(async (repo) => {
             // Try to get thumbnail from repo
             let thumbnail = `https://images.unsplash.com/photo-${Math.floor(Math.random() * 1000000000000)}?auto=format&fit=crop&q=80&w=800`; // Default fallback
-            
+
             try {
               // Try background.png first
               const pngResponse = await fetch(`https://raw.githubusercontent.com/nguyenhuy158/${repo.name}/main/background.png`);
