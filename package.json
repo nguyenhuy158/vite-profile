@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "check": "pnpm build",
     "lint": "eslint .",
     "preview": "vite preview",
     "pages:dev": "wrangler pages dev dist",
@@ -31,5 +32,6 @@
     "tailwindcss": "^3.4.1",
     "vite": "^5.2.0",
     "wrangler": "^4.53.0"
-  }
+  },
+  "packageManager": "pnpm@10.26.2"
 }

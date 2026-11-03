@@ -1,0 +1,15 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # pnpm check: build la cong kiem duy nhat (repo khong co typecheck/lint/test).
+  check:
+    uses: nguyenhuy158/kit/.github/workflows/check.yml@v0.1.0
